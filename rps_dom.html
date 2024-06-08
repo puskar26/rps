@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RPS</title>
+    <link rel="stylesheet" href="rps.css" />
+    <style>
+      body {
+        background-color: cornflowerblue;
+        font-family: Arial;
+
+        color: white;
+      }
+      .title,
+      .title2 {
+        font-size: 30px;
+        font-weight: bold;
+      }
+      .choose {
+        margin-top: 1rem;
+        margin-bottom: 4rem;
+      }
+      .reset {
+        padding: 10px 15px;
+        border: none;
+        cursor: pointer;
+        background-color: gainsboro;
+        margin-top: 20px;
+        font-size: larger;
+        border-radius: 5px;
+      }
+      .reset:active {
+        background-color: rgb(177, 177, 177);
+      }
+      .moverock {
+        height: 50px;
+      }
+      .move-button {
+        background-color: transparent;
+        border: 5px solid white;
+        cursor: pointer;
+        border-radius: 100px;
+        padding: 48px;
+        transition: all 0.5s;
+      }
+      .move-button:active {
+        background-color: white;
+      }
+      .result {
+        margin-top: 40px;
+      }
+      .rps {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      .buttons {
+        display: flex;
+        gap: 2rem;
+      }
+      .img-buttons {
+        display: flex;
+        gap: 1.5rem;
+      }
+      .copy {
+        margin-top: 3rem;
+        display: flex;
+        justify-content: center;
+      }
+      /* MEDIA-QUERY */
+      @media (max-width: 670px) {
+        .moverock {
+          height: 40px;
+        }
+        .move-button {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <script src="rps.js"></script>
+    <div class="rps">
+      <p class="title">Rock, Paper & Scissors</p>
+      <p class="choose">CHOOSE ONE :</p>
+      <div class="img-buttons">
+        <button
+          class="move-button"
+          onclick="
+        playMove('Rock');
+        "
+        >
+          <img src="images/rock-emoji.png" class="moverock" alt="Rock " />
+        </button>
+        <button
+          class="move-button"
+          onclick="
+        playMove('Paper');
+        "
+        >
+          <img src="images/paper-emoji.png" class="moverock" alt="" />
+        </button>
+        <button
+          class="move-button"
+          onclick="
+          playMove('Scissors');
+        "
+        >
+          <img src="images/scissors-emoji.png" class="moverock" alt="" />
+        </button>
+      </div>
+      <p class="js-res title2"></p>
+      <p class="js-move"></p>
+      <p class="js-p result"></p>
+      <div class="buttons">
+        <button
+          class="reset"
+          onclick="
+        count.wins =0;
+        count.losses =0;
+        count.ties = 0;
+        localStorage.removeItem('count');
+        updateScore();
+        "
+        >
+          Reset Score
+        </button>
+        <a href="index.html"><button class="reset">Go Back</button></a>
+      </div>
+    </div>
+    <div class="copy">Created by Puskar Niraula</div>
+    <script>
+      let count = JSON.parse(localStorage.getItem("count"));
+      if (!count) {
+        count = {
+          wins: 0,
+          losses: 0,
+          ties: 0,
+        };
+      }
+
+      updateScore();
+
+      function playMove(playerMove) {
+        const computerMove = compMove();
+        let result = "";
+        if (playerMove === "Rock") {
+          if (computerMove === "Rock") {
+            result = "Tie";
+          } else if (computerMove === "Paper") {
+            result = "You Lose";
+          } else if (computerMove === "Scissors") {
+            result = "You Win";
+          }
+        } else if (playerMove === "Paper") {
+          if (computerMove === "Rock") {
+            result = "You Win";
+          } else if (computerMove === "Paper") {
+            result = "Tie";
+          } else if (computerMove === "Scissors") {
+            result = "You Lose";
+          }
+        } else if (playerMove === "Scissors") {
+          if (computerMove === "Rock") {
+            result = "You Lose";
+          } else if (computerMove === "Paper") {
+            result = "You Win";
+          } else if (computerMove === "Scissors") {
+            result = "Tie";
+          }
+        }
+        if (result === "Tie") {
+          count.ties += 1;
+          console.log(
+            `Wins : ${count.wins} Losses : ${count.losses} Ties : ${count.ties}`
+          );
+        } else if (result === "You Win") {
+          count.wins += 1;
+          console.log(
+            `Wins : ${count.wins} Losses : ${count.losses} Ties : ${count.ties}`
+          );
+        }
+        if (result === "You Lose") {
+          count.losses += 1;
+          console.log(
+            `Wins : ${count.wins} Losses : ${count.losses} Ties : ${count.ties} `
+          );
+        }
+        updateScore();
+
+        localStorage.setItem("count", JSON.stringify(count));
+
+        document.querySelector(".js-res").innerHTML = `${result}`;
+        document.querySelector(
+          ".js-move"
+        ).innerHTML = `    You : <img class= "moverock" src="images/${playerMove}-emoji.png" alt=""> - Computer : <img src="images/${computerMove}-emoji.png" class="moverock" alt="">
+`;
+
+        /*alert(`You picked ${playerMove}. Computer picked ${computerMove}. ${result}
+         Wins : ${count.wins} Losses : ${count.losses} Ties : ${count.ties}
+         `);*/
+      }
+      function updateScore() {
+        document.querySelector(
+          ".js-p"
+        ).innerHTML = `Wins : ${count.wins} Losses : ${count.losses} Ties : ${count.ties}`;
+      }
+
+      function compMove() {
+        const randomNumber = Math.random();
+        let computerMove = "";
+        if (randomNumber >= 0 && randomNumber < 1 / 3) {
+          computerMove = "Rock";
+        } else if (randomNumber >= 1 / 3 && randomNumber < 2 / 3) {
+          computerMove = "Paper";
+        } else if (randomNumber >= 2 / 3 && randomNumber < 1) {
+          computerMove = "Scissors";
+        }
+        return computerMove;
+      }
+    </script>
+  </body>
+</html>
